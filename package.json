@@ -26,6 +26,7 @@
         "eslint": "^6.5.1",
         "eslint-config-airbnb": "^18.0.1",
         "eslint-config-prettier": "^6.4.0",
+        "eslint-plugin-flowtype": "^4.4.1",
         "eslint-plugin-import": "^2.18.2",
         "eslint-plugin-jsx-a11y": "^6.2.3",
         "eslint-plugin-prettier": "^3.1.1",
@@ -44,7 +45,7 @@
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [
-            "eslint --ext .js,.jsx,.ts,.tsx",
+            "npm run lint",
             "prettier --write",
             "git add"
         ]
