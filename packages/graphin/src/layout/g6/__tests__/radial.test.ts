@@ -1,6 +1,5 @@
 import RadialLayout, { RadialLayoutOption } from '../radial';
 import json from '../../basic/__tests__/__mock__/concentric.input.json';
-import { Data } from '../../../types';
 
 const defaultOptions = {
     /** 中心点坐标 */
@@ -13,10 +12,8 @@ const defaultOptions = {
     unitRadius: 150,
 };
 
-const data: Data = json as any; // eslint-disable-line
-
 describe('Radial Layout', () => {
     it('Should return result that matches snapshot', () => {
-        expect(RadialLayout(data, defaultOptions as RadialLayoutOption)).toMatchSnapshot();
+        expect(RadialLayout(json, defaultOptions as RadialLayoutOption)).toMatchSnapshot();
     });
 });

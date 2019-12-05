@@ -1,6 +1,5 @@
 import dataChecking from '../layout/dataChecking';
 
-// eslint-disable-next-line
 const nodeIdErrorInput: any = {
     nodes: [
         {
@@ -18,7 +17,6 @@ const nodeIdErrorInput: any = {
     edges: [],
 };
 
-// eslint-disable-next-line
 const nodeDataErrorInput: any = {
     nodes: [
         {
@@ -36,7 +34,6 @@ const nodeDataErrorInput: any = {
     edges: [],
 };
 
-// eslint-disable-next-line
 const nodeIdDupInput: any = {
     nodes: [
         {
@@ -51,7 +48,6 @@ const nodeIdDupInput: any = {
     edges: [],
 };
 
-// eslint-disable-next-line
 const edgeErrorInput: any = {
     nodes: [],
     edges: [
@@ -70,13 +66,11 @@ const edgeErrorInput: any = {
     ],
 };
 
-// eslint-disable-next-line
 const edgeDupInput: any = {
     nodes: [],
     edges: [{ source: '1', target: '2', data: {} }, { source: '1', target: '2', data: {} }],
 };
 
-// eslint-disable-next-line
 const noopInput: any = {};
 
 describe('DataChecking', () => {

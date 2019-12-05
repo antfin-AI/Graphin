@@ -23,11 +23,11 @@ class Vector {
         return this;
     }
 
-    add(v2: Vector) {
+    add(v2:any) {
         return new Vector(this.x + v2.x, this.y + v2.y);
     }
 
-    subtract(v2: Vector) {
+    subtract(v2:any) {
         return new Vector(this.x - v2.x, this.y - v2.y);
     }
 
@@ -39,11 +39,11 @@ class Vector {
         return this.divide(this.magnitude());
     }
 
-    divide(n: number) {
+    divide(n:any) {
         return new Vector(this.x / n || 0, this.y / n || 0);
     }
 
-    scalarMultip(n: number) {
+    scalarMultip(n:any) {
         return new Vector(this.x * n, this.y * n);
     }
 }

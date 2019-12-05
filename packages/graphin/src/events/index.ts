@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import handleResize from './window-resize';
 import handleZoom from './change-zoom';
 import dragWithForce from './drag-with-force';

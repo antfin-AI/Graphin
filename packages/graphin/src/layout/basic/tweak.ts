@@ -1,6 +1,4 @@
-import { Data, Node, Edge } from '../../types';
-import { ForceLayoutOptions } from './force';
-
+import { Data } from '../../types';
 /* eslint-disable no-param-reassign */
 const getRandomPosition = () => {
     return Math.round((Math.random() - 0.5) * 80);
@@ -11,7 +9,7 @@ const getRandomPosition = () => {
  * @param options
  */
 
-const tweak = (data: Data, options: ForceLayoutOptions) => {
+const tweak = (data: Data, options: any) => {
     const { graph, width, height } = options;
 
     const { nodes: currNodes, edges: currEdges } = data;
@@ -19,7 +17,7 @@ const tweak = (data: Data, options: ForceLayoutOptions) => {
 
     /** 将图上之前节点的位置信息存储在positionMap中 */
     const positionMap = new Map();
-    preNodes.forEach((item: Node) => {
+    preNodes.forEach((item: any) => {
         const { id, x, y } = item;
         positionMap.set(id, {
             x,
@@ -28,7 +26,7 @@ const tweak = (data: Data, options: ForceLayoutOptions) => {
     });
 
     const incrementNodesMap = new Map();
-    currNodes.forEach((node: Node) => {
+    currNodes.forEach((node: any) => {
         const { id } = node;
         const position = positionMap.get(id);
         if (position) {
@@ -40,7 +38,7 @@ const tweak = (data: Data, options: ForceLayoutOptions) => {
     });
 
     const incrementPositonMap = new Map();
-    currEdges.forEach((edge: Edge) => {
+    currEdges.forEach((edge: any) => {
         const { source, target } = edge;
 
         const nodeInSource = incrementNodesMap.get(source);
@@ -64,17 +62,40 @@ const tweak = (data: Data, options: ForceLayoutOptions) => {
         }
     });
 
-    currNodes.forEach((node: Node) => {
+    currNodes.forEach((node: any) => {
         const { id } = node;
         const position = positionMap.get(id) || incrementPositonMap.get(id);
+        // 表示固定节点
+        if (node.data && node.data.fixed === true) {
+            node.layout = {
+                ...node.layout,
+                force: {
+                    mass: 1000000000,
+                },
+            };
+        }
+
+        // 一旦设置了 fix 的 坐标，则加力导 mass 固定且设置为指定位置
+        if (node.data && node.data.fx && node.data.fy) {
+            node.layout = {
+                ...node.layout,
+                force: {
+                    mass: 100000000,
+                },
+            };
+            node.x = node.data.fx;
+            node.y = node.data.fy;
+            return;
+        }
 
         if (position) {
             node.x = position.x;
             node.y = position.y;
-        } else {
-            node.x = Math.round(Math.random() * width);
-            node.y = Math.round(Math.random() * height);
+            return;
         }
+
+        node.x = Math.round(Math.random() * width);
+        node.y = Math.round(Math.random() * height);
     });
 
     return {

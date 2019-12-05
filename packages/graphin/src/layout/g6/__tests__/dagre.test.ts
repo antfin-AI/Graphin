@@ -15,10 +15,8 @@ const defaultOptions = {
     align: 'UL',
 };
 
-const data: Data = json as any; // eslint-disable-line
-
 describe('Dagre Layout', () => {
     it('Should return result that matches snapshot', () => {
-        expect(DagreLayout(data, defaultOptions as DagreLayoutOption)).toMatchSnapshot();
+        expect(DagreLayout(json as Data, defaultOptions as DagreLayoutOption)).toMatchSnapshot();
     });
 });

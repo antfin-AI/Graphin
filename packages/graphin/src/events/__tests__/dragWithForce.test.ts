@@ -6,7 +6,7 @@ describe('Drag with force event', () => {
     const mockStop = jest.fn();
     const mockRefreshPositions = jest.fn();
     const getMockGraphin = () => {
-        const mockGraphin: any = {}; // eslint-disable-line
+        const mockGraphin: any = {};
         mockGraphin.graph = new EventEmitter();
         mockGraphin.graph.refreshPositions = mockRefreshPositions;
         mockGraphin.g6Options = {};
@@ -29,9 +29,7 @@ describe('Drag with force event', () => {
         const nodeModel = {
             layout: {},
         };
-        // eslint-disable-next-line
         const item: any = {
-            // eslint-disable-next-line
             get: (k: any) => {
                 return item[k];
             },
