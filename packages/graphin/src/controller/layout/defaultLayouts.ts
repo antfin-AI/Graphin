@@ -18,9 +18,10 @@ export type LayoutOption =
     | DagreLayoutOption
     | GridLayoutOptions;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
-    const { width, height } = graphin.state;
+    const { graph } = graphin;
+    const width = graph!.get('width');
+    const height = graph!.get('height');
 
     return [
         {
@@ -143,7 +144,7 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
                     data,
                     /** 前置布局，默认为random */
                     preset: {
-                        name: 'random',
+                        name: (prevProps.layout && prevProps.layout.name) || 'concentric',
                         options: {},
                     },
                     /** spring stiffness 弹簧劲度系数 * */
@@ -152,6 +153,11 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
                     defSpringLen: 200,
                     /** repulsion 斥力，这里指代 库伦常量Ke */
                     repulsion: 200.0 * 5,
+                    /** 向心力 */
+                    centripetalOptions: {
+                        leaf: 1.6,
+                        single: 1.6,
+                    },
                     /** 速度的减震因子，其实就是阻尼系数 */
                     damping: 0.9,
                     /** 最小能量阈值，当粒子运动，有阻尼系数的存在，最终会将初始的能量消耗殆尽 */
@@ -165,6 +171,7 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
                 };
 
                 const layouOpts = { ...defaultOptions, ...options };
+
                 /** 只要不是初始化空数据布局，前一次的布局为力导布局，那么设置它的前置布局为force，内部采用tweak布局 */
                 if (prevProps && prevProps.layout!.name === 'force') {
                     if (prevProps.data.nodes.length === 0) {
@@ -187,10 +194,6 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
                 };
             },
         },
-
-        //     random: (data, options: RandomLayoutOptions) => ({
-        //         data: randomLayout(data, options),
-        //     }),
     ];
 };
 

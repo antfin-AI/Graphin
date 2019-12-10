@@ -1,4 +1,4 @@
-const isDebugMode = false;
+const isDebugMode = true;
 const floorRandom = (number: number) => {
     return Math.floor(Math.random() * number);
 };
@@ -27,6 +27,7 @@ const debug = (name: string) => {
     }
     const color = colorMap[name];
 
+    // eslint-disable-next-line
     return (...message: any[]) => {
         // eslint-disable-line
         if (isDebugMode && process.env.NODE_ENV === 'development') {

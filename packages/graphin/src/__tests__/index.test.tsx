@@ -122,7 +122,7 @@ describe('<Graphin />', () => {
             };
 
             const layout = {
-                name: 'grid',
+                name: 'circle',
             };
 
             const { getByTestId, rerender } = render(
@@ -141,43 +141,25 @@ describe('<Graphin />', () => {
             // Draw Canvas need some time
             await wait();
 
-            expect(getCanvasPathCount(getByTestId)).toEqual(1);
+            const prevEventsCount = getCanvasEventCount(getByTestId);
 
-            data = {
-                nodes: [
-                    {
-                        id: 'foo',
-                        data: {
-                            id: 'foo',
+            rerender(
+                <Graphin
+                    data={mock(10)
+                        .circle()
+                        .graphin()}
+                    layout={layout}
+                    options={{
+                        animate: false,
+                        animateCfg: {
+                            duration: 0,
                         },
-                    },
-                    {
-                        id: 'foo1',
-                        data: {
-                            id: 'foo1',
-                        },
-                    },
-                    {
-                        id: 'foo2',
-                        data: {
-                            id: 'foo2',
-                        },
-                    },
-                    {
-                        id: 'foo3',
-                        data: {
-                            id: 'foo3',
-                        },
-                    },
-                ],
-                edges: [],
-            };
-            act(() => {
-                rerender(<Graphin data={data} layout={layout}></Graphin>);
-            });
+                    }}
+                ></Graphin>,
+            );
 
             await wait();
-            expect(getCanvasPathCount(getByTestId)).toEqual(5);
+            expect(getCanvasEventCount(getByTestId) > prevEventsCount).toBeTruthy();
         },
         TIMEOUT,
     );
@@ -401,7 +383,6 @@ describe('<Graphin />', () => {
                         <div
                             onClick={() => {
                                 console.log('undo called');
-                                console.log(props.apis.history.getInfo());
                                 props.apis.history.undo();
                             }}
                         >

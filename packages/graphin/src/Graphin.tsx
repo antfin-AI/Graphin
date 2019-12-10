@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { ErrorInfo } from 'react';
 
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 /** controller */
 import initController from './controller/init';
 import registerController from './controller/register';
@@ -12,7 +12,7 @@ import apisController from './apis';
 import eventController from './events/index';
 
 /** types  */
-import { GraphinProps, GraphinState, ExtendedGraphOptions, GraphType, ForceSimulation } from './types';
+import { GraphinProps, GraphinState, ExtendedGraphOptions, GraphType, ForceSimulation, Data } from './types';
 
 /** utils */
 import debug from './utils/debug';
@@ -22,7 +22,7 @@ import './index.less';
 class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     graphDOM: HTMLDivElement | null = null;
 
-    graph: GraphType;
+    graph?: GraphType;
 
     history: HistoryController;
 
@@ -37,7 +37,6 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     constructor(props: GraphinProps) {
         super(props);
         this.state = {
-            /** 图是否准备完成 */
             isGraphReady: false,
             data: props.data,
             forceSimulation: null,
@@ -47,16 +46,15 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         };
         this.history = new HistoryController();
         this.forceSimulation = null;
-        this.graph = {} as GraphType;
         this.getLayoutInfo = () => {};
     }
 
     componentDidMount() {
         const { data } = this.props;
         debug('effect')('did-mount');
-        /** 1. 注册节点 */
+        // register props.extend and props.register
         const behavirosMode = registerController(this.props);
-        /** 2. 初始化实例 */
+        // init G6 instance
         const { instance, width, height, options } = initController(
             this.props,
             this.graphDOM as HTMLDivElement,
@@ -66,7 +64,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         this.graph = instance as GraphType;
         const { data: newData, forceSimulation } = layoutController(this.getContext(), { data });
         this.forceSimulation = forceSimulation!;
-        /** 3.设置state */
+
         this.setState(
             {
                 isGraphReady: true,
@@ -80,14 +78,13 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
                 this.renderGraphWithLifeCycle();
             },
         );
-        /** 4.内部监听一些图事件 */
         this.handleEvents();
     }
 
     componentDidUpdate(prevProps: GraphinProps) {
         const isDataChange = this.shouldUpdateWithDeps(prevProps, ['data']);
         const isLayoutChange = this.shouldUpdateWithDeps(prevProps, ['layout']);
-        /** 只有data或者layout改变的时候，才会重新update */
+        // only rerender when data or layout change
         if (isDataChange || isLayoutChange) {
             let { data: currentData } = this.state;
             if (isDataChange) {
@@ -96,14 +93,13 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
             }
             const { data, forceSimulation } = layoutController(this.getContext(), { data: currentData, prevProps });
             this.forceSimulation = forceSimulation!;
-            /** 5.设置state */
             this.setState(
                 {
                     data,
                     forceSimulation,
                 },
                 () => {
-                    /** 6.渲染 */
+                    // rerender Graph
                     this.renderGraphWithLifeCycle();
                 },
             );
@@ -129,7 +125,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     };
 
     clear = () => {
-        this.graph.clear();
+        this.graph!.clear();
         this.history.reset();
         this.clearEvents!();
 
@@ -175,7 +171,6 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     };
 
     stopForceSimulation = () => {
-        /** 如果有模拟器需要先停止 */
         const { forceSimulation } = this.state;
         if (forceSimulation) {
             forceSimulation.stop();
@@ -185,7 +180,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     handleSaveHistory = () => {
         const currentState = {
             ...this.state,
-            graphSave: cloneDeep(this.graph.save()), // 避免数据引用
+            graphSave: cloneDeep(this.graph!.save()),
         };
         this.history.save(currentState);
     };
@@ -222,23 +217,19 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         }
     };
 
-    renderGraph = (data: any) => {
-        this.graph.changeData(cloneDeep(data));
+    renderGraph = (data: Data) => {
+        this.graph!.changeData(cloneDeep(data));
         /**
          * TODO 移除 `afterchangedata` Event
          * 此方法应该放到G6的changeData方法中去emit
          */
-        this.graph.emit('afterchangedata');
+        this.graph!.emit('afterchangedata');
     };
 
-    /**
-     * 根据history来渲染图
-     */
     renderGraphByHistory = () => {
-        /** 如果历史上有模拟器，需要重新启动 */
         const { forceSimulation, graphSave } = this.state;
         if (forceSimulation) {
-            forceSimulation.restart(graphSave.nodes || [], this.graph);
+            forceSimulation.restart(graphSave.nodes || [], this.graph!);
         }
         this.renderGraph(graphSave);
     };
@@ -249,7 +240,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         const combineProps = {
             graph: this.graph,
             graphDOM: this.graphDOM,
-            graphVars: this.state, // 保留引用
+            graphVars: this.state,
             apis: this.getApis(),
         };
 
@@ -257,23 +248,19 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
             return null;
         }
 
-        /**  1.render-props */
         if (typeof children === 'function') {
             return children(combineProps);
         }
 
-        /** 2.combose-component */
         /**
-         * Children是React元素的情况 :有包裹的Tag即可，无论是div或者是Fragement或者是组件
-         * 1. <Graphehe> <div> this is text <ContextMenu />  </div> </Graphene>
-         * 2. <Graphehe> <CustomerComponent> this is text  <ContextMenu /> </CustomerComponent> </Graphene>
-         * 2. <Graphehe> <Fragment> this is text  <ContextMenu /> </Graphene>
+         * 1. <Graphin> <div> this is text <ContextMenu />  </div> </Graphin>
+         * 2. <Graphin> <CustomerComponent> this is text  <ContextMenu /> </CustomerComponent> </Graphin>
+         * 3. <Graphin> <Fragment> this is text  <ContextMenu /> </Graphin>
          */
         if (
             React.isValidElement(children) &&
             (String(children.type) === 'Symbol(react.fragment)' || typeof children.type === 'string')
         ) {
-            // eslint-disable-next-line no-console
             console.error('Please do not wrap components inside dom element or Fragment when using Graphin');
             return children;
         }
@@ -283,7 +270,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         }
 
         return React.Children.map(children, child => {
-            // 如果传入的是 DOM 元素或不是合法的 Element，不传入 props
+            // do not pass props if element is a DOM element or not a valid react element.
             if (!React.isValidElement(child) || typeof child.type === 'string') {
                 return child;
             }
@@ -294,7 +281,6 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     };
 
     render() {
-        // debug('core')(this.state);
         const { isGraphReady } = this.state;
         return (
             <>

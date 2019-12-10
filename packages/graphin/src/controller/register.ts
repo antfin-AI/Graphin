@@ -1,134 +1,145 @@
-import registerInnerMarker from "../icons/marker";
-import { GraphinProps } from "../types";
-import compiler from "../shape/render/compiler";
-import CircleNode from "../shape/render/CircleNode";
-/** register */
-import RegisterLineEdge from "../shape/g6/LineEdge";
-import graphinHighlight from "../behaviors/graphin-highlight";
-// import graphinBrushSelect from '../behaviors/custom-brush-select';
+import G6 from '@antv/g6';
 
-import G6 from "@antv/g6";
+import registerInnerMarker from '../icons/marker';
+import { GraphinProps } from '../types';
+import compiler from '../shape/render/compiler';
+import CircleNode from '../shape/render/CircleNode';
 
-const innerRegister = {
-  nodeShape: () => {
+import RegisterLineEdge from '../shape/g6/LineEdge';
+import graphinHighlight from '../behaviors/graphin-highlight';
+import { registerFontFamily } from '../icons/iconFont';
+import { BehaviorModeItem } from './init';
+
+const defaultRegister = {
+    nodeShape: () => {
+        return [];
+    },
+    edgeShape: () => {
+        return [
+            {
+                name: 'LineEdge',
+                register: () => {
+                    RegisterLineEdge(G6);
+                },
+            },
+        ];
+    },
+    behavior: () => {
+        return [
+            {
+                name: 'graphin-highlight',
+                mode: 'default',
+                options: {},
+                register: () => {
+                    G6.registerBehavior('graphin-highlight', graphinHighlight);
+                },
+            },
+        ];
+    },
+};
+
+const defaultExtend: GraphinProps['extend'] = {
+    nodeShape: () => {
+        return [
+            {
+                name: 'CircleNode',
+                render: CircleNode,
+            },
+        ];
+    },
+    marker: () => {
+        return [];
+    },
+    icon: () => {
+        return [];
+    },
+};
+
+const dummyRegister = () => {
     return [];
-  },
-  edgeShape: () => {
-    return [
-      {
-        name: "LineEdge",
-        register: () => {
-          RegisterLineEdge(G6);
-        }
-      }
-    ];
-  },
-  behavior: () => {
-    return [
-      {
-        name: "graphin-highlight",
-        mode: "default",
-        options: {},
-        register: () => {
-          G6.registerBehavior("graphin-highlight", graphinHighlight);
-        }
-      }
-    ];
-  }
 };
-
-const dumpRegister = () => {
-  return [];
-};
-const dumpExtend = () => {
-  return [];
-};
-
-const innerExtend = {
-  nodeShape: () => {
-    return [
-      {
-        name: "CircleNode",
-        render: CircleNode
-      }
-    ];
-  },
-  marker: () => {
+const dummyExtend = () => {
     return [];
-  }
+};
+const dummyIcon = () => {
+    return [];
 };
 
 const toUpperCaseWithFirst = (str: string): string => {
-  return `${str[0].toUpperCase()}${str.slice(1)}`;
+    return `${str[0].toUpperCase()}${str.slice(1)}`;
 };
+
+interface Mode {
+    mode: string;
+    type: string;
+    [key: string]: string | number | boolean | undefined;
+}
+
+interface BehaviorMode {
+    default: BehaviorModeItem[];
+    [key: string]: BehaviorModeItem[];
+}
+
 const graphinRegister = (props: GraphinProps) => {
-  const { extend = {}, register = {}, options = {} } = props;
+    const { extend = {}, register = {}, options = {} } = props;
 
-  const innerBehaviors = innerRegister.behavior().filter(behavior => {
-    const behaviorName = behavior.name.split("-")[1];
-    const disableName = `disable${toUpperCaseWithFirst(behaviorName)}`;
-    return !options[disableName];
-  });
+    const defaultBehaviors = defaultRegister.behavior().filter(behavior => {
+        const behaviorName = behavior.name.split('-')[1];
+        const disableName = `disable${toUpperCaseWithFirst(behaviorName)}`;
+        return !options[disableName];
+    });
 
-  /** 使用G6原生方法得到的 */
-  const {
-    nodeShape = dumpRegister,
-    edgeShape = dumpRegister,
-    behavior = dumpRegister
-  } = register;
-  const registerNodes = [...innerRegister.nodeShape(), ...nodeShape(G6)];
-  const registerEdges = [...innerRegister.edgeShape(), ...edgeShape(G6)];
-  const registerBehaviors = [...(behavior(G6) || {})];
-  registerNodes.forEach(item => {
-    item.register(G6);
-  });
-  registerEdges.forEach(item => {
-    item.register(G6);
-  });
-  const modes: any[] = [];
+    // props.register 处理
+    const { nodeShape = dummyRegister, edgeShape = dummyRegister, behavior = dummyRegister } = register;
+    const registerNodes = [...defaultRegister.nodeShape(), ...nodeShape(G6)];
+    const registerEdges = [...defaultRegister.edgeShape(), ...edgeShape(G6)];
+    const registerBehaviors = [...defaultBehaviors, ...behavior(G6)];
 
-  registerBehaviors.forEach(item => {
-    item.register(G6);
-    const { name, mode } = item;
-    try {
-      modes.push({
-        mode,
-        type: name,
-        ...item.options
-      });
-      // eslint-disable-next-line no-empty
-    } catch (error) {}
-  });
+    registerNodes.forEach(item => {
+        item.register(G6);
+    });
+    registerEdges.forEach(item => {
+        item.register(G6);
+    });
+    const modes: Mode[] = [];
 
-  const behaviorMode = modes.reduce(
-    (acc, curr) => {
-      const { mode, ...others } = curr;
-      if (!acc[mode]) {
-        acc[mode] = [];
-      }
-      acc[mode].push(others);
-      return { ...acc };
-    },
-    {
-      default: []
-    }
-  );
+    registerBehaviors.forEach(item => {
+        item.register(G6);
+        const { name, mode } = item;
 
-  /** 扩展得到的 */
-  const {
-    nodeShape: ExNodeShape = dumpExtend,
-    marker: ExMarker = dumpExtend
-  } = extend;
+        modes.push({
+            mode,
+            type: name,
+            ...item.options,
+        });
+    });
 
-  const extendNodes = [...innerExtend.nodeShape(), ...ExNodeShape()];
-  const extendMarker = [...innerExtend.marker(), ...ExMarker()];
+    const initialValue: BehaviorMode = {
+        default: [],
+    };
 
-  extendNodes.forEach(item => {
-    compiler(item);
-  });
+    const behaviorMode = modes.reduce((acc, curr) => {
+        const { mode, ...others } = curr;
+        if (!acc[mode]) {
+            acc[mode] = [];
+        }
+        acc[mode].push(others);
+        return { ...acc };
+    }, initialValue);
 
-  registerInnerMarker(extendMarker);
+    // props.extend 处理
+    const { icon = dummyIcon, nodeShape: ExNodeShape = dummyExtend, marker: ExMarker = dummyExtend } = extend;
 
-  return behaviorMode;
+    const extendNodes = [...defaultExtend.nodeShape!(), ...ExNodeShape()];
+    const extendMarker = [...defaultExtend.marker!(), ...ExMarker()];
+
+    extendNodes.forEach(item => {
+        compiler(item);
+    });
+
+    registerInnerMarker(extendMarker);
+    registerFontFamily(icon());
+
+    return behaviorMode;
 };
 export default graphinRegister;

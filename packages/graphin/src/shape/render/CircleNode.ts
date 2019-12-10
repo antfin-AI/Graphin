@@ -1,25 +1,26 @@
-/** 默认节点样式 */
-const defaultStyle = {
-    /** 节点的大小 */
+import { Node, NodeStyle, NodeShapeFunction } from '../../types';
+import iconFont from '../../icons/iconFont';
+
+const defaultStyle: NodeStyle = {
     nodeSize: 20,
-    /** 节点的主要颜色 */
     primaryColor: '#9900EF',
-    /** 文本的字体大小 */
     fontSize: 12,
-    /** 文本的字体颜色 */
     fontColor: '#3b3b3b',
-    /** dark 置灰 */
     dark: '#eee',
+    fontFamily: 'graphin',
 };
-type Style = typeof defaultStyle;
-const renderNodeShape = (node: any) => {
-    const { primaryColor, nodeSize, fontColor, fontSize, dark } = {
+
+const renderNodeShape: NodeShapeFunction = (node: Node) => {
+    const mergedStyle: Partial<NodeStyle> = {
         ...defaultStyle,
         ...node.style,
-    } as Style;
+    };
 
-    const iconSize = nodeSize / 2;
-    const fontPosition = nodeSize * 1.4;
+    const { primaryColor, nodeSize, fontColor, fontSize, dark, fontFamily, icon } = mergedStyle as NodeStyle;
+
+    const iconSize = nodeSize;
+    const fontPosition = nodeSize! * 1.4;
+
     return {
         shape: 'CircleNode',
         shapeComponents: [
@@ -36,15 +37,19 @@ const renderNodeShape = (node: any) => {
                     lineWidth: 2,
                 },
             },
+            // G6 iconfont 方案。https://www.yuque.com/antv/g6/acaihu
             {
-                shape: 'Marker',
+                shape: 'text',
                 attrs: {
                     id: 'node-icon',
-                    symbol: node.data.type,
                     x: 0,
                     y: 0,
-                    r: iconSize,
+                    fontSize: iconSize,
                     fill: primaryColor,
+                    text: iconFont(icon || node.data.type || '', fontFamily!),
+                    fontFamily,
+                    textAlign: 'center',
+                    textBaseline: 'middle',
                 },
             },
             {

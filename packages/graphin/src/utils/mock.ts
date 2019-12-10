@@ -78,7 +78,7 @@ export class Mock {
     };
 
     type = (nodeType: string) => {
-        this.nodes.map(node => {
+        this.nodes = this.nodes.map(node => {
             return {
                 ...node,
                 type: nodeType,
@@ -87,7 +87,7 @@ export class Mock {
         return this;
     };
 
-    circle = (centerId: string) => {
+    circle = (centerId = '') => {
         let id = centerId;
         if (this.nodeIds.indexOf(id) === -1) {
             id = 'node-0';
