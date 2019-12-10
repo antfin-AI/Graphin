@@ -115,6 +115,9 @@ export interface Node {
         label?: string;
         /** 节点属性 */
         properties?: any[]; // eslint-disable-line
+        fixed?: boolean;
+        fx?: number;
+        fy?: number;
     };
     /** 唯一标示ID，必选 */
     id: string;
