@@ -39,7 +39,7 @@ interface Return {
 const forceLayout = (options: ForceLayoutOptions): Return => {
     const {
         width,
-        height,
+        height = 300,
         graph,
         data,
         /** force options */

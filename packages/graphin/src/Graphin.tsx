@@ -63,6 +63,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         this.g6Options = options;
         this.graph = instance as GraphType;
         const { data: newData, forceSimulation } = layoutController(this.getContext(), { data });
+
         this.forceSimulation = forceSimulation!;
 
         this.setState(
