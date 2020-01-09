@@ -64,11 +64,7 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     plugins,
   } = options as ExtendedGraphOptions;
 
-<<<<<<< HEAD
-    const defaultModes: (string | BehaviorModeItem)[] = [];
-=======
-  const defaultModes: (string | BehaviorModeItem)[] = ['click-select'];
->>>>>>> master
+  const defaultModes: (string | BehaviorModeItem)[] = [];
 
   if (!disablePan) {
     defaultModes.push('drag-canvas');
