@@ -44,7 +44,7 @@ const forceLayout = (options: ForceLayoutOptions): Return => {
     data,
     /** force options */
     preset = { name: '', options: {} },
-    animation,
+    animation = true,
     done = () => {},
     isOptimization,
     ...others
@@ -125,7 +125,12 @@ const forceLayout = (options: ForceLayoutOptions): Return => {
           }
         }
       });
-      graph.refreshPositions();
+      // 开启动画，则每次 render 不使用 g6 的原生动画，如果关闭动画，最后一次  render 使用 g6 动画
+      if (animation) {
+        graph.refreshPositions();
+      } else {
+        graph.positionsAnimate();
+      }
       sourceData = forceData;
     } catch (error) {
       // eslint-disable-next-line no-console
