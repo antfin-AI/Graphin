@@ -1,6 +1,6 @@
 {
   "name": "@alipay/graphin-test",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "the react toolkit for graph analysis based on g6",
   "main": "./dist/index",
   "types": "./dist/index.d",
