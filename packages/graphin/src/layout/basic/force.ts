@@ -5,6 +5,7 @@ import randomLayout, { RandomLayoutOptions } from './random';
 import ConcentricLayout from './concentric';
 import TweakLayout from './tweak';
 import { LayoutOptionBase, Data, Node, ForceSimulation, ExtendedGraph, Graph } from '../../types';
+import { updateLabelPosition } from '../utils/graph';
 
 export interface ForceLayoutOptions extends LayoutOptionBase {
   /** 前置布局 */
@@ -113,6 +114,7 @@ const forceLayout = (options: ForceLayoutOptions): Return => {
   // 4. 自定义渲染函数
   simulation.register('render', (forceData: Data) => {
     try {
+      updateLabelPosition(forceData.nodes);
       forceData.nodes.forEach((item: Node) => {
         const node = graph.findById(item.id);
         if (node) {

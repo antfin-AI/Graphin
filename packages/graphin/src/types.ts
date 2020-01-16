@@ -129,13 +129,15 @@ export interface Node {
   /** 节点样式 */
   style?: Partial<NodeStyle>;
   /** 节点位置信息 */
-  x?: number;
-  y?: number;
+  x: number;
+  y: number;
   /** 内置的布局，追加的额外属性 */
   layout?: NodeLayoutType;
   /** 节点度数 */
   degree?: number;
   searchTypes?: string[];
+  group?: string;
+  shapeComponent?: any; // eslint-disable-line
 }
 
 export interface NodeLayoutType {

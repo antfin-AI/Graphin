@@ -131,6 +131,8 @@ export class Mock {
           data: node,
           shape: 'CircleNode',
           style: {},
+          x: 0,
+          y: 0,
         };
       }),
       edges: this.edges.map(edge => {
