@@ -1,6 +1,7 @@
 import G6 from '@antv/g6';
 import { cloneDeep } from 'lodash';
 import { LayoutOptionBase, Data } from '../../types';
+import { updateLabelPosition } from '../utils/graph';
 
 export interface DagreLayoutOption extends LayoutOptionBase {
   /** 中心点坐标 */
@@ -25,6 +26,7 @@ const dagreLayout = (data: Data, options: DagreLayoutOption): Data => {
 
   layout.init(source);
   layout.execute();
+  updateLabelPosition(layout.nodes);
   return {
     nodes: layout.nodes,
     edges: data.edges,

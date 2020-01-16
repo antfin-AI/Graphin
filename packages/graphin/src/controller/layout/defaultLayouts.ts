@@ -51,11 +51,11 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
           /** 中心点坐标 */
           center: [width / 2, height / 2],
           /** 节点大小 */
-          nodeSize: [50, 50],
+          nodeSize: [20, 20],
           /**  节点水平间距(px) */
           nodesep: 12,
           /** 每一层节点之间间距 */
-          ranksep: 50,
+          ranksep: 30,
           /** 放置位置 */
           align: 'UL',
         };
