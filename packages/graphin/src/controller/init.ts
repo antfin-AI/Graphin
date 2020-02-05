@@ -82,6 +82,8 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     });
   }
 
+  const { default: any, ...customModes } = behaviorsMode;
+
   const instance: GraphType = new G6.Graph({
     container: graphDOM,
     renderer: 'canvas',
@@ -95,6 +97,7 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     plugins,
     modes: {
       default: [...defaultModes, ...options.modes!.default!, ...behaviorsMode.default],
+      ...(customModes || {}),
     },
   });
 

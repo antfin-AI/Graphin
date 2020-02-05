@@ -22,7 +22,11 @@ module.exports = env => {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/env', '@babel/preset-react'],
-            plugins: [['@babel/plugin-proposal-class-properties', { loose: true }], ['react-hot-loader/babel']],
+            plugins: [
+              ['@babel/plugin-proposal-optional-chaining'],
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              ['react-hot-loader/babel'],
+            ],
           },
         },
         {
