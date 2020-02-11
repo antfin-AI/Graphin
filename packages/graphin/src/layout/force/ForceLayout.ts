@@ -228,7 +228,6 @@ class ForceLayout {
 
       this.nodePoints.set(node.id, new Point(vec, String(node.id), node.data, mass));
     });
-
     this.edges.forEach(edge => {
       const source = this.nodePoints.get(edge.source.id) as Point;
       const target = this.nodePoints.get(edge.target.id) as Point;
@@ -426,7 +425,7 @@ class ForceLayout {
       const singleNode = degree === 0;
       /** 默认的向心力配置 */
       const defaultRadio = {
-        left: 2,
+        leaf: 2,
         single: 2,
         others: 1, //  1 / getBaseLog(2, degree),
         center: () => {
