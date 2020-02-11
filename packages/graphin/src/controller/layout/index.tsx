@@ -67,11 +67,13 @@ const layoutController = (
     return node.x && node.y;
   });
 
+  // 如果每个点都有位置信息，说明不需要计算布局，直接返回数据，交给上层渲染
+  if (hasPosition) {
+    return { data };
+  }
+
   if (!(layout && layout.name)) {
     // layout不存在，且有位置信息，则认为是 save-render 操作
-    if (hasPosition) {
-      return { data };
-    }
     layout = { name: 'concentric' };
   }
 
