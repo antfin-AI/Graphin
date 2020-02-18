@@ -74,7 +74,7 @@ interface BehaviorMode {
 const graphinRegister = (props: GraphinProps) => {
   const { extend = {}, register = {}, options = {} } = props;
 
-  const defaultBehaviors = defaultRegister.behavior().filter(behavior => {
+  const defaultBehaviors = defaultRegister.behavior().filter((behavior: { name: string }) => {
     const behaviorName = behavior.name.split('-')[1];
     const disableName = `disable${toUpperCaseWithFirst(behaviorName)}`;
     return !options[disableName];
