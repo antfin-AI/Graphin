@@ -75,8 +75,15 @@ const layoutController = (
     layout = { name: 'concentric' };
   }
 
+  // 对于没有关系的辐射布局，采用圆形布局，因为 辐射布局，必须要有中心点
+  if (layout.name === 'radial' && data.edges.length === 0) {
+    layout = {
+      name: 'circle',
+      options: {},
+    };
+  }
+
   // 设置布局的 options参数
-  const { name } = layout;
   const options = {
     graph,
     width,
@@ -84,6 +91,8 @@ const layoutController = (
     data,
     ...layout.options,
   };
+
+  const { name } = layout;
 
   // 得到当前匹配的布局函数
   const matchLayout = layouts.find(item => item.name === name) || {
