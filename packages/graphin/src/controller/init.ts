@@ -1,6 +1,5 @@
 import G6, { Graph as GraphType } from '@antv/g6';
 import { GraphinProps, ExtendedGraphOptions } from '../types';
-
 export interface BehaviorModeItem {
   type: string;
   [key: string]: string | number | boolean | undefined;

@@ -25,16 +25,7 @@ const defaultRegister = {
     ];
   },
   behavior: () => {
-    return [
-      {
-        name: 'graphin-highlight',
-        mode: 'default',
-        options: {},
-        register: () => {
-          G6.registerBehavior('graphin-highlight', graphinHighlight);
-        },
-      },
-    ];
+    return [];
   },
 };
 
