@@ -81,7 +81,9 @@ const layoutController = (
   if (layout.name === 'radial' && data.edges.length === 0) {
     layout = {
       name: 'circle',
-      options: {},
+      options: {
+        r: data.nodes.length * 15,
+      },
     };
   }
 
