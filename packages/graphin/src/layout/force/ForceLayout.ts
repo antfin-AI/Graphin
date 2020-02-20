@@ -213,6 +213,19 @@ class ForceLayout {
     /** 初始化点和边的信息 */
     const { width, height } = this.props;
 
+    // 复杂关系网，即节点之间关系非常多
+    let isComplexLinkNet = false;
+
+    // 根据边所对应的节点，算出关系的复杂度
+    const releatedNodeIds = new Map();
+    this.edges.forEach(edge => {
+      releatedNodeIds.set(edge.source.id, 1);
+      releatedNodeIds.set(edge.target.id, 1);
+    });
+    if (this.edges.length > releatedNodeIds.size * 2) {
+      isComplexLinkNet = true;
+    }
+
     this.nodes.forEach(node => {
       const x = node.data.x || width / 2;
       const y = node.data.y || height / 2;
@@ -223,12 +236,14 @@ class ForceLayout {
       }
       const degree = getDegree(node, this.edges);
       node.data.layout.degree = degree;
-
       const mass = this.getMass(node.data);
+
+      if (degree >= 5) {
+        releatedNodeIds.set(node.id, degree);
+      }
 
       this.nodePoints.set(node.id, new Point(vec, String(node.id), node.data, mass));
     });
-
     this.edges.forEach(edge => {
       const source = this.nodePoints.get(edge.source.id) as Point;
       const target = this.nodePoints.get(edge.target.id) as Point;
@@ -238,11 +253,20 @@ class ForceLayout {
       if (this.props.defSpringLen) {
         length = this.props.defSpringLen;
       }
+      if (isComplexLinkNet) {
+        length = this.props.defSpringLen * 1.5;
+      }
+
+      if ([edge.source.id, edge.target.id].find(id => releatedNodeIds.get(id) >= 5)) {
+        length = this.props.defSpringLen * (isComplexLinkNet ? 2 : 1.3);
+      }
+      if ([edge.source.id, edge.target.id].find(id => releatedNodeIds.get(id) >= 10)) {
+        length = this.props.defSpringLen * (isComplexLinkNet ? 3 : 2);
+      }
 
       if (edge.data.spring) {
         length = edge.data.spring;
       }
-
       this.edgeSprings.set(edge.id, new Spring(source, target, length));
     });
 
@@ -386,8 +410,27 @@ class ForceLayout {
 
         const { coulombDisScale } = this.props;
         const { repulsion } = this.props;
+        const iNodeDegree = iNode.data.layout?.degree ?? 1;
+        const jNodeDegree = jNode.data.layout?.degree ?? 1;
+
+        const degreeTotal = iNodeDegree + jNodeDegree;
+        let degreeRatio = 1;
+        if (iNodeDegree > 3 && jNodeDegree > 3) {
+          if (degreeTotal > 6) {
+            degreeRatio = 1.5;
+          }
+          if (degreeTotal > 10) {
+            degreeRatio = 3;
+          }
+          if (degreeTotal > 15) {
+            degreeRatio = 5;
+          }
+          if (degreeTotal > 20) {
+            degreeRatio = 7;
+          }
+        }
         const v = (this.nodePoints.get(iNode.id) as Point).p.subtract(this.nodePoints.get(jNode.id).p);
-        const dis = (v.magnitude() + 0.1) * coulombDisScale;
+        const dis = ((v.magnitude() + 0.1) * coulombDisScale) / degreeRatio;
         const direction = v.normalise(); // 向量的方向：基向量
         const factor = 1;
 
@@ -426,8 +469,8 @@ class ForceLayout {
       const singleNode = degree === 0;
       /** 默认的向心力配置 */
       const defaultRadio = {
-        left: 2,
-        single: 2,
+        leaf: 1,
+        single: 10,
         others: 1, //  1 / getBaseLog(2, degree),
         center: () => {
           return {
