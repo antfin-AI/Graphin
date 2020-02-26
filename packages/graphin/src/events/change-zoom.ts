@@ -14,7 +14,7 @@ const changeZoom = (graphin: Graphin) => {
     isZoomOptimize = () => {
       return false;
     },
-    keyShapeZoom = 0.6,
+    keyShapeZoom = 0.25,
   } = g6Options!;
 
   const extendedGraph = graph as ExtendedGraph;

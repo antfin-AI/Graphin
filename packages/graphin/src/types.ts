@@ -231,6 +231,7 @@ export interface NodeShapeFunction {
         };
       };
     };
+    update: Function;
   };
 }
 

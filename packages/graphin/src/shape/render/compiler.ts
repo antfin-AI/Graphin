@@ -77,6 +77,11 @@ const compiler = (extendNodeShape: ExtendNodeShape) => {
         }
       });
     },
+    // eslint-disable-next-line
+    update(cfg: any, node: Node) {
+      const { update = () => {} } = renderNodeShape(cfg);
+      update(cfg, node);
+    },
   });
 };
 export default compiler;
