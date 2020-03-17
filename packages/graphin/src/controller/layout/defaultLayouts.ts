@@ -3,6 +3,7 @@ import radialLayout, { RadialLayoutOption } from '../../layout/g6/radial';
 import ConcentricLayout, { ConcentricOption } from '../../layout/basic/concentric';
 import forceLayout, { ForceLayoutOptions } from '../../layout/basic/force';
 import dagreLayout, { DagreLayoutOption } from '../../layout/g6/dagre';
+import circularLayout, { CircularLayoutOption } from '../../layout/g6/circular';
 import gridLayout, { GridLayoutOptions } from '../../layout/basic/grid';
 import { RandomLayoutOptions } from '../../layout/basic/random';
 
@@ -61,6 +62,24 @@ const defaultLayouts = (graphin: Graphin, prevProps: GraphinProps) => {
         };
         return {
           data: dagreLayout(data, { ...defaultOptions, ...options } as DagreLayoutOption),
+        };
+      },
+    },
+    {
+      name: 'circular',
+      desc: '圆形布局',
+      icon: 'chrome',
+      layout: (data: Data, options: LayoutOption): { data: Data } => {
+        const defaultOptions = {
+          /** 中心点坐标 */
+          center: [width / 2, height / 2],
+          /** 中心点坐标 */
+          radius: 100,
+          /** null | 'topology' | 'degree' */
+          ordering: 'degree',
+        };
+        return {
+          data: circularLayout(data, { ...defaultOptions, ...options } as CircularLayoutOption),
         };
       },
     },
