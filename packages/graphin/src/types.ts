@@ -119,6 +119,10 @@ export interface Node {
     fixed?: boolean;
     fx?: number;
     fy?: number;
+    /** 初始化状态 */
+    states?: {
+      [key: string]: boolean;
+    };
   };
   /** 唯一标示ID，必选 */
   id: string;
