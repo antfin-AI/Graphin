@@ -28,6 +28,7 @@ import debug from './utils/debug';
 import shallowEqual from './utils/shallowEqual';
 
 import './index.less';
+import initState from './controller/state';
 
 type DiffValue = Data | Layout | undefined;
 
@@ -186,6 +187,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     this.graph!.changeData(cloneDeep(data));
     if (this.graph!.getCurrentMode().length > 0) this.graph!.read(cloneDeep(data));
     this.graph!.emit('afterchangedata');
+    initState(this.graph, data);
     this.handleSaveHistory();
   };
 
