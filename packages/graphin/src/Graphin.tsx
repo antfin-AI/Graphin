@@ -186,8 +186,8 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     const { data } = this.state;
     this.graph!.changeData(cloneDeep(data));
     if (this.graph!.getCurrentMode().length > 0) this.graph!.read(cloneDeep(data));
-    this.graph!.emit('afterchangedata');
     initState(this.graph, data);
+    this.graph!.emit('afterchangedata');
     this.handleSaveHistory();
   };
 
