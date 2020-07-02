@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { ErrorInfo } from 'react';
-
 import { cloneDeep } from 'lodash';
 /** controller */
 import initController from './controller/init';
@@ -88,7 +87,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
         forceSimulation,
       },
       () => {
-        this.renderGraphWithLifeCycle();
+        this.renderGraphWithLifeCycle(true);
       },
     );
     this.handleEvents();
@@ -182,13 +181,19 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     return this;
   };
 
-  renderGraphWithLifeCycle = () => {
+  renderGraphWithLifeCycle = (firstRender = false) => {
+    // console.time('renderGraphWithLifeCycle')
     const { data } = this.state;
+    // if(firstRender) this.graph!.data(data)
     this.graph!.changeData(cloneDeep(data));
+    // console.time('graph.paint')
+    // if(!firstRender && !this!.g6Options.animate) this.graph!.paint()
+    // console.timeEnd('graph.paint')
     if (this.graph!.getCurrentMode().length > 0) this.graph!.read(cloneDeep(data));
     this.graph!.emit('afterchangedata');
-    initState(this.graph, data);
+    // initState(this.graph, data);
     this.handleSaveHistory();
+    // console.timeEnd('renderGraphWithLifeCycle')
   };
 
   stopForceSimulation = () => {
