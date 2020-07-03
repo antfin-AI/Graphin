@@ -28,7 +28,7 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     delegateNode: false, // 节点代理
     wheelSensitivity: 1, // 缩放的敏感度，我们在内部有不同设备的最佳匹配
     // rendering options:
-    animate: true,
+    animate: false,
     animateCfg: {
       onFrame: null,
       duration: 500,
