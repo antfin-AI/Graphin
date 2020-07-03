@@ -1,5 +1,6 @@
 import G6, { Graph as GraphType } from '@antv/g6';
 import { GraphinProps, ExtendedGraphOptions } from '../types';
+
 export interface BehaviorModeItem {
   type: string;
   [key: string]: string | number | boolean | undefined;
@@ -27,7 +28,7 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     delegateNode: false, // 节点代理
     wheelSensitivity: 1, // 缩放的敏感度，我们在内部有不同设备的最佳匹配
     // rendering options:
-    animate: true,
+    animate: false,
     animateCfg: {
       onFrame: null,
       duration: 500,
@@ -37,6 +38,7 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     modes: {
       default: [],
     },
+    autoPaint: false,
   };
 
   const options: Partial<ExtendedGraphOptions> = {
@@ -62,7 +64,6 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
     animateCfg,
     plugins,
   } = options as ExtendedGraphOptions;
-
   const defaultModes: (string | BehaviorModeItem)[] = [];
 
   if (!disablePan) {
@@ -86,7 +87,6 @@ const initGraph = (props: GraphinProps, graphDOM: HTMLDivElement, behaviorsMode:
   const instance: GraphType = new G6.Graph({
     container: graphDOM,
     renderer: 'canvas',
-
     width,
     height,
     animate,
