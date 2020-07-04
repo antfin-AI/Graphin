@@ -194,7 +194,6 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     // if(!firstRender && !this!.g6Options.animate) this.graph!.paint()
     // console.timeEnd('graph.paint')
     if (this.graph!.getCurrentMode().length > 0) this.graph!.read(cloneData);
-    this.graph!.emit('afterchangedata');
     initState(this.graph, data);
     this.graph!.emit('afterchangedata');
     this.handleSaveHistory();
