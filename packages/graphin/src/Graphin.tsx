@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { ErrorInfo } from 'react';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, uniqBy } from 'lodash';
 /** controller */
 import initController from './controller/init';
 import registerController from './controller/register';
@@ -204,13 +204,17 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
   getBorderNodes = (nodes = []) => {
     const xOrderedNodes = nodes.sort((pre, next) => pre.x - next.x);
     const yOrderedNodes = nodes.sort((pre, next) => pre.y - next.y);
-    return {
-      nodes: [
+    const borderNodes = uniqBy(
+      [
         xOrderedNodes[0],
         xOrderedNodes[xOrderedNodes.length - 1],
         yOrderedNodes[0],
         yOrderedNodes[yOrderedNodes.length - 1],
       ],
+      'id',
+    );
+    return {
+      nodes: borderNodes,
       edges: [],
     };
   };
