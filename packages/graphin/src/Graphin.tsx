@@ -188,7 +188,7 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
       // 为了提高fitview的效率 取边上4个点去进行第一次的fitview
       const firstRenderData = this.getBorderNodes(cloneData.nodes);
       this.graph!.changeData(firstRenderData);
-      this.graph!.emit('afterchangedata');
+      this.graph!.emit('firstrender');
     }
     this.graph!.changeData(cloneData);
     // console.time('graph.paint')
