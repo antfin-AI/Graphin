@@ -187,8 +187,10 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
     if (firstRender) {
       // 为了提高fitview的效率 取边上4个点去进行第一次的fitview
       const firstRenderData = this.getBorderNodes(cloneData.nodes);
-      this.graph!.changeData(firstRenderData);
-      this.graph!.emit('firstrender');
+      if (this.graph) {
+        this.graph.changeData(firstRenderData);
+        this.graph.emit('firstrender');
+      }
     }
     this.graph!.changeData(cloneData);
     // console.time('graph.paint')
@@ -202,17 +204,14 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
 
   // 获取所有节点x,y分别为最大最小的节点
   getBorderNodes = (nodes = []) => {
-    const xOrderedNodes = nodes.sort((pre, next) => pre.x - next.x);
-    const yOrderedNodes = nodes.sort((pre, next) => pre.y - next.y);
-    const borderNodes = uniqBy(
-      [
-        xOrderedNodes[0],
-        xOrderedNodes[xOrderedNodes.length - 1],
-        yOrderedNodes[0],
-        yOrderedNodes[yOrderedNodes.length - 1],
-      ],
-      'id',
-    );
+    const xOrderedNodes = cloneDeep(nodes).sort((pre, next) => pre.x - next.x);
+    const yOrderedNodes = cloneDeep(nodes).sort((pre, next) => pre.y - next.y);
+    const borderNodes = [
+      xOrderedNodes[0],
+      xOrderedNodes[xOrderedNodes.length - 1],
+      yOrderedNodes[0],
+      yOrderedNodes[yOrderedNodes.length - 1],
+    ];
     return {
       nodes: borderNodes,
       edges: [],
