@@ -206,12 +206,15 @@ class Graph extends React.PureComponent<GraphinProps, GraphinState> {
   getBorderNodes = (nodes = []) => {
     const xOrderedNodes = cloneDeep(nodes).sort((pre, next) => pre.x - next.x);
     const yOrderedNodes = cloneDeep(nodes).sort((pre, next) => pre.y - next.y);
-    const borderNodes = [
-      xOrderedNodes[0],
-      xOrderedNodes[xOrderedNodes.length - 1],
-      yOrderedNodes[0],
-      yOrderedNodes[yOrderedNodes.length - 1],
-    ];
+    const borderNodes = uniqBy(
+      [
+        xOrderedNodes[0],
+        xOrderedNodes[xOrderedNodes.length - 1],
+        yOrderedNodes[0],
+        yOrderedNodes[yOrderedNodes.length - 1],
+      ],
+      'id',
+    ).filter(node => node);
     return {
       nodes: borderNodes,
       edges: [],
